@@ -1,4 +1,4 @@
-"user server";
+"use server";
 
 import { auth } from "@clerk/nextjs";
 import { InputType, ReturnType } from "./types";
