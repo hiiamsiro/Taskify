@@ -14,7 +14,6 @@ import { FormInput } from "@/components/form/form-input";
 import { FormSubmit } from "@/components/form/form-submit";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { error } from "console";
 
 export const ListForm = () => {
   const router = useRouter();
