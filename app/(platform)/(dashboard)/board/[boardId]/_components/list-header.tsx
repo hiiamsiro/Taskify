@@ -96,7 +96,7 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
           {title}
         </div>
       )}
-      <ListOptions onAddCard={enableEditing} data={data} />
+      <ListOptions onAddCard={onAddCard} data={data} />
     </div>
   );
 };
