@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { createSafeAction } from "@/lib/create-safe-action";
 import { CopyCard } from "./schema";
+import { createAuditLog } from "@/lib/create-audit-log";
+import { ACTION, ENTITY_TYPE } from "@prisma/client";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
   const { userId, orgId } = auth();
@@ -26,22 +28,22 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         list: {
           board: {
             orgId,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
     if (!cardToCopy) {
       return {
-        error: "Card not found"
-      }
+        error: "Card not found",
+      };
     }
 
     const lastCard = await db.card.findFirst({
       where: { listId: cardToCopy.listId },
       orderBy: { order: "desc" },
-      select: { order: true }
-    })
+      select: { order: true },
+    });
 
     const newOrder = lastCard ? lastCard.order + 1 : 1;
 
@@ -51,8 +53,15 @@ const handler = async (data: InputType): Promise<ReturnType> => {
         description: cardToCopy.description,
         order: newOrder,
         listId: cardToCopy.listId,
-      }
-    })
+      },
+    });
+
+    await createAuditLog({
+      entityTitle: card.title,
+      entityId: card.id,
+      entityType: ENTITY_TYPE.CARD,
+      action: ACTION.CREATE,
+    });
   } catch (error) {
     return {
       error: "Failed to copy.",
